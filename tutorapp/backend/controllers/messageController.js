@@ -2,17 +2,46 @@
 const Message = require('../models/message');
 const { Op } = require('sequelize'); // Asegúrate de importar Op si lo usas
 
-// Controlador para manejar el envío de mensajes
+// Almacena los sockets de los usuarios
+const userSockets = {};
+
 const handleMessage = (io) => {
   io.on('connection', (socket) => {
     console.log('Usuario conectado', socket.id);
+
+    // Almacena el ID del usuario en el socket
+    socket.on('registerUser', (userId) => {
+      userSockets[userId] = socket.id; // Almacena el ID del socket asociado al ID del usuario
+      console.log(`Usuario registrado: ${userId} con socket ID: ${socket.id}`);
+    });
 
     socket.on('sendMessage', async (data) => {
       try {
         // Guardar el mensaje en la base de datos
         const newMessage = await Message.create(data);
-        // Emitir el mensaje a los usuarios correspondientes
-        io.to(data.receiver_id).emit('receiveMessage', newMessage); // Emitir el mensaje guardado
+        
+        // Asegúrate de que el nuevo mensaje tenga las fechas
+        const messageToSend = {
+          id: newMessage.id, // ID del nuevo mensaje
+          sender_id: newMessage.sender_id,
+          receiver_id: newMessage.receiver_id,
+          message: newMessage.message,
+          createdAt: newMessage.createdAt, // Fecha de creación
+          updatedAt: newMessage.updatedAt  // Fecha de actualización
+        };
+    
+        console.log('Mensaje guardado en la base de datos:', messageToSend);
+        
+        // Emitir el mensaje a los usuarios correspondientes usando los IDs de socket
+        const receiverSocketId = userSockets[data.receiver_id];
+        const senderSocketId = userSockets[data.sender_id];
+
+        if (receiverSocketId) {
+          io.to(receiverSocketId).emit('receiveMessage', messageToSend); // Emitir el mensaje al receptor
+        }
+        if (senderSocketId) {
+          io.to(senderSocketId).emit('receiveMessage', messageToSend); // Emitir el mensaje al remitente
+        }
       } catch (error) {
         console.error('Error al enviar el mensaje:', error);
       }
@@ -20,6 +49,14 @@ const handleMessage = (io) => {
 
     socket.on('disconnect', () => {
       console.log('Usuario desconectado');
+      // Eliminar el socket del objeto cuando el usuario se desconecta
+      for (const userId in userSockets) {
+        if (userSockets[userId] === socket.id) {
+          delete userSockets[userId];
+          console.log(`Usuario desconectado: ${userId}`);
+          break;
+        }
+      }
     });
   });
 };

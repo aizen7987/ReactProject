@@ -12,6 +12,12 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
   const [loading, setLoading] = useState(true); // Estado de carga
 
   useEffect(() => {
+    console.log('Conectando al socket...');
+    socket.on('connect', () => {
+      console.log('Conectado al socket:', socket.id);
+      socket.emit('registerUser', userId); // Registra el ID del usuario
+    });
+
     // Obtener mensajes al cargar el componente
     const fetchMessages = async () => {
       try {
@@ -29,13 +35,19 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
 
     // Escuchar mensajes recibidos
     socket.on('receiveMessage', (data) => {
+      console.log('Mensaje recibido a través del socket:', data); 
       setMessages((prevMessages) => [...prevMessages, data]);
+    });
+    
+    socket.on('testEvent', (data) => {
+      console.log('Evento de prueba recibido:', data);
     });
 
     return () => {
-      socket.off('receiveMessage');
+      socket.off('testEvent');
+      socket.off('receiveMessage'); // Asegúrate de limpiar el listener
     };
-  }, [userId, otherUserId]);
+  }, [userId]);
 
   const sendMessage = async () => {
     if (message.trim() === '') return; // Evitar enviar mensajes vacíos

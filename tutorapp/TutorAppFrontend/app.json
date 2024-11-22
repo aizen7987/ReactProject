@@ -19,10 +19,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.oviera.TutorAppFrontend", 
+      "versionCode": 1 
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4c1df547-6803-4409-9f4a-bcc90fa082d3"
+      }
     }
   }
 }

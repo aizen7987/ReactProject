@@ -1,0 +1,11 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    // ... opciones existentes ...
+    "jsx": "react",
+  },
+  "include": [
+    "src/**/*", // Asegúrate de incluir todos los archivos en el directorio src
+    "src/components/**/*.js" // Agrega esta línea para incluir archivos .js en components
+  ]
+}

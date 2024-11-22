@@ -6,20 +6,20 @@ const express = require('express');
 
    router.post('/register', async (req, res) => {
      const { username, password, role } = req.body;
-     //const hashedPassword = await bcrypt.hash(password, 10);
-     const user = await User.create({ username, password: password, role });
+     const hashedPassword = await bcrypt.hash(password, 10);
+     const user = await User.create({ username, password: hashedPassword, role });
      res.json(user);
    });
 
    router.post('/login', async (req, res) => {
-     const { username, password } = req.body;
-     const user = await User.findOne({ where: { username } });
-     if (user && await bcrypt.compare(password, user.password)) {
-       const token = jwt.sign({ id: user.id, role: user.role }, 'secret');
-       res.json({ token });
-     } else {
-       res.status(401).json({ error: 'Credenciales incorrectas' });
-     }
-   });
+    const { username, password } = req.body;
+    const user = await User.findOne({ where: { username } });
+    if (user && await bcrypt.compare(password, user.password)) {
+      const token = jwt.sign({ id: user.id, role: user.role }, 'secret');
+      res.json({ token, role: user.role, userId: user.id }); // Incluye el rol en la respuesta
+    } else {
+      res.status(401).json({ error: 'Credenciales incorrectas' });
+    }
+  });
 
    module.exports = router;

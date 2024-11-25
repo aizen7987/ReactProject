@@ -35,6 +35,8 @@ const handleMessage = (io) => {
         // Emitir el mensaje a los usuarios correspondientes usando los IDs de socket
         const receiverSocketId = userSockets[data.receiver_id];
         const senderSocketId = userSockets[data.sender_id];
+        
+        console.log("id_receiver:" + userSockets[data.receiver_id]);
 
         if (receiverSocketId) {
           io.to(receiverSocketId).emit('receiveMessage', messageToSend); // Emitir el mensaje al receptor

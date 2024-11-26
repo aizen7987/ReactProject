@@ -1,29 +1,27 @@
-// src/components/Login.tsx
 import React, { useState } from 'react';
 import { View, TextInput, Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { useSocket } from '../contexts/SocketContext'; // Importa el hook del contexto
 
-interface LoginProps {
-  navigation: any; // Puedes definir un tipo más específico si lo deseas
-}
-
-const Login: React.FC<LoginProps> = ({ navigation }) => {
+const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const socket = useSocket();
 
   const handleLogin = async () => {  
     try {
-      const response = await axios.post('http://192.168.5.41:3001/api/auth/login', {
+      const response = await axios.post('https://backendtutorapp.onrender.com/api/auth/login', {
         username,
         password
       });
       
-      // Asegúrate de que el servidor devuelva el rol
-      const userId = response.data.userId; // Obtener el ID del usuario
-      const userRole = response.data.role; // Obtener el rol del usuario
-  
-      // Redirigir a la pantalla de menú y pasar el rol del usuario
-      console.log('User ID:', userId); // Verifica que el ID se esté recibiendo correctamente
+      const userId = response.data.userId; 
+      const userRole = response.data.role; 
+
+      
+      socket.emit('registerUser', userId);
+
+      console.log('User ID:', userId); 
       console.log('User Role:', userRole); 
       navigation.navigate('Menu', { userId, userRole }); 
     } catch (error) {
@@ -63,7 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5', // Color de fondo
+    backgroundColor: '#f5f5f5', 
   },
   title: {
     fontSize: 24,
@@ -77,18 +75,18 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
-    backgroundColor: '#fff', // Color de fondo del input
+    backgroundColor: '#fff', 
   },
   button: {
-    backgroundColor: '#007BFF', // Color de fondo del botón
+    backgroundColor: '#007BFF', 
     padding: 15,
     borderRadius: 5,
-    width: '100%', // Ancho completo
-    alignItems: 'center', // Centrar el texto
+    width: '100%',
+    alignItems: 'center', 
     marginBottom: 10,
   },
   buttonText: {
-    color: '#fff', // Color del texto del botón
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

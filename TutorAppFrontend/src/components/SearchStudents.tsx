@@ -3,24 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import axios from 'axios';
 
-interface SearchStudentsProps {
-  navigation: any; // Puedes definir un tipo más específico si lo deseas
+export interface SearchStudentsProps {
+  navigation: any;
   route: {
     params: {
-      userId: number; // Asegúrate de que userId esté definido aquí
+      userId: number; 
     };
   };
 }
 
 const SearchStudents: React.FC<SearchStudentsProps> = ({ navigation, route }) => {
-  const { userId } = route.params; // Obtener userId de los parámetros
+  const { userId } = route.params;
   const [students, setStudents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Función para obtener estudiantes desde el backend
+
   const fetchStudents = async () => {
     try {
-      const response = await axios.get('http://192.168.5.41:3001/api/students'); // Cambia la URL según tu API
+      const response = await axios.get('https://backendtutorapp.onrender.com/api/students'); 
       setStudents(response.data);
     } catch (error) {
       console.error('Error fetching students:', error);
@@ -28,15 +28,14 @@ const SearchStudents: React.FC<SearchStudentsProps> = ({ navigation, route }) =>
   };
 
   useEffect(() => {
-    fetchStudents(); // Llamar a la función al montar el componente
+    fetchStudents(); 
   }, []);
 
-  // Filtrar estudiantes según la búsqueda
+  
   const filteredStudents = students.filter(student =>
     student.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Manejar la selección de un estudiante
   const handleSelectStudent = (studentId: number) => {
     navigation.navigate('Chat', { userId, otherUserId: studentId, userRole: 'tutor' });
   };

@@ -3,24 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import axios from 'axios';
 
-interface SearchTutorsProps {
-  navigation: any; // Puedes definir un tipo más específico si lo deseas
+export interface SearchTutorsProps {
+  navigation: any;
   route: {
     params: {
-      userId: number; // Asegúrate de que userId esté definido aquí
+      userId: number; 
     };
   };
 }
 
 const SearchTutors: React.FC<SearchTutorsProps> = ({ navigation, route }) => {
-  const { userId } = route.params; // Obtener userId de los parámetros
+  const { userId } = route.params;
   const [tutors, setTutors] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Función para obtener tutores desde el backend
+  
   const fetchTutors = async () => {
     try {
-      const response = await axios.get('http://192.168.5.41:3001/api/tutors'); // Cambia la URL según tu API
+      const response = await axios.get('https://backendtutorapp.onrender.com/api/tutors'); 
       setTutors(response.data);
     } catch (error) {
       console.error('Error fetching tutors:', error);
@@ -28,15 +28,15 @@ const SearchTutors: React.FC<SearchTutorsProps> = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    fetchTutors(); // Llamar a la función al montar el componente
+    fetchTutors();
   }, []);
 
-  // Filtrar tutores según la búsqueda
+
   const filteredTutors = tutors.filter(tutor =>
     tutor.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Manejar la selección de un tutor
+
   const handleSelectTutor = (tutorId: number) => {
     navigation.navigate('Chat', { userId, otherUserId: tutorId, userRole: 'student' });
   };

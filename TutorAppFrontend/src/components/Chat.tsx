@@ -1,80 +1,83 @@
+// src/components/Chat.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, FlatList, ActivityIndicator } from 'react-native';
-import io from 'socket.io-client';
+import { View, Text, StyleSheet, TextInput, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { useSocket } from '../contexts/SocketContext';
 import axios from 'axios';
 
-const socket = io('http://192.168.5.41:3001'); // Cambia la URL según tu servidor
-
 const Chat: React.FC<{ route: any }> = ({ route }) => {
-  const { userId, otherUserId, userRole } = route.params; // Obtener IDs y rol desde los parámetros de la ruta
+  const { userId, otherUserId, userRole } = route.params; 
   const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(true); // Estado de carga
+  const [loading, setLoading] = useState(true); 
+  const socket = useSocket(); 
 
   useEffect(() => {
     console.log('Conectando al socket...');
     socket.on('connect', () => {
       console.log('Conectado al socket:', socket.id);
-      socket.emit('registerUser', userId); // Registra el ID del usuario
+      socket.emit('registerUser', userId);
     });
 
-    // Obtener mensajes al cargar el componente
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`http://192.168.5.41:3001/api/messages/${userId}/${otherUserId}`);
+        const response = await axios.get(`https://backendtutorapp.onrender.com/api/messages/${userId}/${otherUserId}`);
         console.log('Mensajes recuperados:', response.data);
         setMessages(response.data);
       } catch (error) {
         console.error('Error al obtener mensajes:', error);
       } finally {
-        setLoading(false); // Cambiar el estado de carga a false después de la recuperación
+        setLoading(false);
       }
     };
 
     fetchMessages();
 
-    // Escuchar mensajes recibidos
     socket.on('receiveMessage', (data) => {
       console.log('Mensaje recibido a través del socket:', data); 
-      setMessages((prevMessages) => [...prevMessages, data]);
-    });
-    
-    socket.on('testEvent', (data) => {
-      console.log('Evento de prueba recibido:', data);
+      // Solo agregar el mensaje si no es del usuario actual
+      if (data.sender_id !== userId) {
+        setMessages((prevMessages) => {
+          const messageExists = prevMessages.some(msg => msg.id === data.id);
+          if (!messageExists) {
+            return [...prevMessages, data];
+          }
+          return prevMessages; 
+        });
+      }
     });
 
     return () => {
-      socket.off('testEvent');
-      socket.off('receiveMessage'); // Asegúrate de limpiar el listener
+      socket.off('receiveMessage');
     };
-  }, [userId]);
+  }, [userId, socket]); 
 
   const sendMessage = async () => {
-    if (message.trim() === '') return; // Evitar enviar mensajes vacíos
+    if (message.trim() === '') return; 
     const data = {
-      sender_id: userId, // Usar el ID del usuario actual
-      receiver_id: otherUserId, // Usar el ID del otro usuario (tutor o estudiante)
+      sender_id: userId, 
+      receiver_id: otherUserId,
       message,
     };
     console.log('Enviando mensaje:', data);
     
     try {
-      socket.emit('sendMessage', data); // Emitir el mensaje
-      setMessage(''); // Limpiar el campo de entrada
+      socket.emit('sendMessage', data); 
+      setMessages((prevMessages) => [...prevMessages, data]); 
+      setMessage(''); 
     } catch (error) {
-      console.error('Error al enviar el mensaje:', error); // Manejo de errores al enviar
+      console.error('Error al enviar el mensaje:', error); 
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Chat con {userRole === 'student' ? 'Tutor' : 'Estudiante'}</Text>
-      {loading ? ( // Mostrar indicador de carga si está cargando
+      {loading ? ( 
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
           data={messages}
-          keyExtractor={(item) => item.id.toString()} // Asegúrate de que el ID del mensaje se use como clave
+          keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
           renderItem={({ item }) => (
             <Text style={styles.message}>
               {item.sender_id === userId ? 'Tú: ' : userRole === 'student' ? 'Tutor: ' : 'Estudiante: '}{item.message}
@@ -88,7 +91,9 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
         onChangeText={setMessage}
         style={styles.input}
       />
-      <Button title="Enviar" onPress={sendMessage} />
+      <TouchableOpacity style={styles.button} onPress={sendMessage}>
+        <Text style={styles.buttonText}>Enviar</Text> 
+      </TouchableOpacity>
     </View>
   );
 };
@@ -117,7 +122,20 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
-    backgroundColor: '#e1ffc7', // Color de fondo para los mensajes
+    backgroundColor: '#e1ffc7', 
+  },
+  button: {
+    backgroundColor: '#007BFF', 
+    padding: 15,
+    borderRadius: 5,
+    width: '100%', 
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#fff', 
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

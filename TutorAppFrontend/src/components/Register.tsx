@@ -5,13 +5,13 @@ import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 
 interface RegisterProps {
-  navigation: any; // Puedes definir un tipo más específico si lo deseas
+  navigation: any; 
 }
 
 const Register: React.FC<RegisterProps> = ({ navigation }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [role, setRole] = useState<string>('student'); // Valor predeterminado
+  const [role, setRole] = useState<string>('student'); 
 
   const handleRegister = async () => {
     try {
@@ -21,7 +21,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
         role
       });
       Alert.alert('Registro exitoso', `Usuario ${response.data.username} registrado`);
-      navigation.navigate('Login'); // Redirigir a la pantalla de inicio de sesión
+      navigation.navigate('Login'); 
     } catch (error) {
       Alert.alert('Error', 'No se pudo registrar el usuario');
     }
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5', // Color de fondo
+    backgroundColor: '#f5f5f5',
   },
   input: {
     width: '100%',
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
-    backgroundColor: '#fff', // Color de fondo del input
+    backgroundColor: '#fff', 
   },
   picker: {
     height: 50,
@@ -80,15 +80,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: '#007BFF', // Color de fondo del botón
+    backgroundColor: '#007BFF', 
     padding: 15,
     borderRadius: 5,
-    width: '100%', // Ancho completo
-    alignItems: 'center', // Centrar el texto
+    width: '100%', 
+    alignItems: 'center', 
     marginBottom: 10,
   },
   buttonText: {
-    color: '#fff', // Color del texto del botón
+    color: '#fff', 
     fontSize: 16,
     fontWeight: 'bold',
   },

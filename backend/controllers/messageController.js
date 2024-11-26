@@ -1,8 +1,6 @@
-// backend/controllers/messageController.js
 const Message = require('../models/message');
-const { Op } = require('sequelize'); // Asegúrate de importar Op si lo usas
+const { Op } = require('sequelize');
 
-// Almacena los sockets de los usuarios
 const userSockets = {};
 
 const handleMessage = (io) => {
@@ -32,17 +30,11 @@ const handleMessage = (io) => {
     
         console.log('Mensaje guardado en la base de datos:', messageToSend);
         
-        // Emitir el mensaje a los usuarios correspondientes usando los IDs de socket
+        // Emitir el mensaje solo al receptor
         const receiverSocketId = userSockets[data.receiver_id];
-        const senderSocketId = userSockets[data.sender_id];
         
-        console.log("id_receiver:" + userSockets[data.receiver_id]);
-
         if (receiverSocketId) {
           io.to(receiverSocketId).emit('receiveMessage', messageToSend); // Emitir el mensaje al receptor
-        }
-        if (senderSocketId) {
-          io.to(senderSocketId).emit('receiveMessage', messageToSend); // Emitir el mensaje al remitente
         }
       } catch (error) {
         console.error('Error al enviar el mensaje:', error);
@@ -77,6 +69,7 @@ const getMessages = async (req, res) => {
       },
       order: [['createdAt', 'ASC']], // Ordenar mensajes por fecha
     });
+    console.log('Mensajes recuperados:', messages); 
     res.json(messages);
   } catch (error) {
     console.error('Error al obtener mensajes:', error);

@@ -1,29 +1,28 @@
-// src/components/Menu.tsx
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface MenuProps {
-  navigation: any; // Puedes definir un tipo más específico si lo deseas
-  route: any; // Asegúrate de que el componente reciba los parámetros de la ruta
+  navigation: any; 
+  route: any; 
 }
 
 const Menu: React.FC<MenuProps> = ({ navigation, route }) => {
-  const { userRole, userId } = route.params; // Obtener el rol y el ID del usuario desde los parámetros de la ruta
-  console.log('User Role in Menu:', userRole); // Verifica que el rol se esté recibiendo correctamente
+  const { userRole, userId } = route.params; 
+  console.log('User Role in Menu:', userRole);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Menú Principal</Text>
       <View style={styles.footer}>
-        {userRole === 'student' && ( // Mostrar solo para estudiantes
+        {userRole === 'student' && ( 
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SearchTutors', { userId })}>
             <Text style={styles.buttonText}>Buscar Tutores</Text>
           </TouchableOpacity>
         )}
-        {userRole === 'tutor' && ( // Mostrar solo para tutores
+        {userRole === 'tutor' && ( 
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SearchStudents', { userId })}>
             <Text style={styles.buttonText}>Buscar Estudiantes</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> 
         )}
       </View>
     </View>
@@ -33,32 +32,32 @@ const Menu: React.FC<MenuProps> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between', // Espacio entre el contenido y el pie
+    justifyContent: 'space-between', 
     padding: 16,
-    backgroundColor: '#f5f5f5', // Color de fondo
+    backgroundColor: '#f5f5f5', 
   },
   title: {
     fontSize: 24,
     marginBottom: 20,
-    textAlign: 'center', // Centrar el título
+    textAlign: 'center',
   },
   footer: {
-    flexDirection: 'row', // Disposición horizontal
-    justifyContent: 'space-around', // Espacio entre los botones
+    flexDirection: 'row', 
+    justifyContent: 'space-around', 
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: '#ccc', // Línea superior
-    backgroundColor: '#fff', // Color de fondo del pie
+    borderTopColor: '#ccc',
+    backgroundColor: '#fff', 
   },
   button: {
-    backgroundColor: '#007BFF', // Color de fondo del botón
+    backgroundColor: '#007BFF',
     padding: 15,
     borderRadius: 5,
-    width: '40%', // Ancho del botón
-    alignItems: 'center', // Centrar el texto
+    width: '40%',
+    alignItems: 'center', 
   },
   buttonText: {
-    color: '#fff', // Color del texto del botón
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

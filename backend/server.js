@@ -14,7 +14,7 @@ const { handleMessage } = require('./controllers/messageController'); // Importa
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server); // Inicializa Socket.io con el servidor
 
 app.use(cors());
 app.use(express.json());
@@ -27,6 +27,26 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tutors', tutorRoutes);
 app.use('/api/students', studentsRoutes); // Asegúrate de que esta línea esté presente
 app.use('/api/messages', messageRoutes);
+
+// Configuración de Socket.io
+io.on('connection', (socket) => {
+  console.log('Usuario conectado:', socket.id);
+
+  socket.on('registerUser', (userId) => {
+    console.log('Usuario registrado:', userId);
+    // Aquí puedes guardar el ID del socket en una estructura de datos si es necesario
+  });
+
+  socket.on('sendMessage', (data) => {
+    console.log('Mensaje enviado:', data);
+    // Emitir el mensaje a todos los sockets conectados
+    io.emit('receiveMessage', data); // O puedes emitir solo a un socket específico
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Usuario desconectado:', socket.id);
+  });
+});
 
 // Usar el controlador de mensajes
 handleMessage(io); // Asegúrate de que esto esté correcto

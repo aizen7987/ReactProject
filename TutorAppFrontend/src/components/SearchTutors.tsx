@@ -20,7 +20,7 @@ const SearchTutors: React.FC<SearchTutorsProps> = ({ navigation, route }) => {
   
   const fetchTutors = async () => {
     try {
-      const response = await axios.get('http://192.168.5.41:3001/api/tutors'); 
+      const response = await axios.get('https://backendtutorapp.onrender.com/api/tutors'); 
       setTutors(response.data);
     } catch (error) {
       console.error('Error fetching tutors:', error);

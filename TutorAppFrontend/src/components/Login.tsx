@@ -10,7 +10,7 @@ const Login: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const handleLogin = async () => {  
     try {
-      const response = await axios.post('http://192.168.5.41:3001/api/auth/login', {
+      const response = await axios.post('https://backendtutorapp.onrender.com/api/auth/login', {
         username,
         password
       });

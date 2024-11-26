@@ -20,7 +20,7 @@ const SearchStudents: React.FC<SearchStudentsProps> = ({ navigation, route }) =>
 
   const fetchStudents = async () => {
     try {
-      const response = await axios.get('http://192.168.5.41:3001/api/students'); 
+      const response = await axios.get('https://backendtutorapp.onrender.com/api/students'); 
       setStudents(response.data);
     } catch (error) {
       console.error('Error fetching students:', error);

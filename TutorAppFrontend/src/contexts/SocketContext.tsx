@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const socket = io('http://192.168.5.41:3001');
+  const socket = io('https://backendtutorapp.onrender.com');
 
   useEffect(() => {
     console.log('Conectando al socket...');

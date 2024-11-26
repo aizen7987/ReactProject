@@ -20,7 +20,7 @@ const Chat: React.FC<{ route: any }> = ({ route }) => {
 
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`http://192.168.5.41:3001/api/messages/${userId}/${otherUserId}`);
+        const response = await axios.get(`https://backendtutorapp.onrender.com/api/messages/${userId}/${otherUserId}`);
         console.log('Mensajes recuperados:', response.data);
         setMessages(response.data);
       } catch (error) {
